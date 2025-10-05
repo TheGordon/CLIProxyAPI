@@ -27,9 +27,6 @@ quota-exceeded:
   switch-project: true
   switch-preview-model: true
 
-# Disable request authentication (Factory handles its own)
-auth:
-  providers: []
-
-# No API keys needed for Claude OAuth
-generative-language-api-key: []
+# API keys for authentication - clients must provide one of these
+api-keys:
+  - "sk-iFINhBqbzNMdXEDWJIEoMb8hOG19shFTeSMgnCNhuCg"
