@@ -27,6 +27,5 @@ quota-exceeded:
   switch-project: true
   switch-preview-model: true
 
-# API keys for authentication - clients must provide one of these
-api-keys:
-  - "sk-iFINhBqbzNMdXEDWJIEoMb8hOG19shFTeSMgnCNhuCg"
+# API keys for authentication - set via Railway environment variable
+# The Dockerfile will inject the CLIPROXY_API_KEY environment variable at runtime

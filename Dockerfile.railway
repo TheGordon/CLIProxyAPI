@@ -4,8 +4,20 @@ COPY . .
 RUN go build -o cli-proxy-api ./cmd/server
 
 FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+RUN apk --no-cache add ca-certificates yq
 WORKDIR /root/
 COPY --from=builder /app/cli-proxy-api .
 COPY configRailway.yaml .
-CMD ["./cli-proxy-api", "--config", "configRailway.yaml"]
+
+# Create startup script to inject API key from environment variable
+RUN echo '#!/bin/sh' > /root/start.sh && \
+    echo 'if [ -n "$CLIPROXY_API_KEY" ]; then' >> /root/start.sh && \
+    echo '  echo "api-keys:" >> /root/configRailway.yaml' >> /root/start.sh && \
+    echo '  echo "  - \"$CLIPROXY_API_KEY\"" >> /root/configRailway.yaml' >> /root/start.sh && \
+    echo 'else' >> /root/start.sh && \
+    echo '  echo "WARNING: CLIPROXY_API_KEY not set - API will be unsecured!"' >> /root/start.sh && \
+    echo 'fi' >> /root/start.sh && \
+    echo 'exec ./cli-proxy-api --config configRailway.yaml' >> /root/start.sh && \
+    chmod +x /root/start.sh
+
+CMD ["/root/start.sh"]
